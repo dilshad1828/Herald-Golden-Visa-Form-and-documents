@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herald Golden Visa Application Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .upload-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .upload-label {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 min-h-screen">
+    <div id="app"></div>
+
+    <script>
+        // --- Embedded Herald Logo (Base64) ---
+        const heraldLogoBase64 = "data:image/png;base64,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";
+        
+        // Application State
+        const state = {
+            currentStep: 'customer-details',
+            customerData: { name: '', dob: '', nationality: '', phone: '', email: '', passportNumber: '', currentSalary: '', employmentYears: '', companyName: '' },
+            documents: {
+                'passport-copy': { files: [], name: 'Passport Copy' },
+                'visa-emirates-id': { files: [], name: 'Visa and Emirates ID' },
+                'studio-photo': { files: [], name: 'Studio Photo' },
+                'mofa-certificate': { files: [], name: 'MOFA Attested Educational Certificate' },
+                'mark-sheet': { files: [], name: 'Mark Sheet (Transcripts)' },
+                'bank-statement': { files: [], name: 'Salary Bank Statement' },
+                'pay-slips': { files: [], name: 'Pay Slips' },
+                'noc-company': { files: [], name: 'No Objection Letter from Company' },
+                'noc-freezone': { files: [], name: 'NOC from Freezone' },
+                'equivalency-certificate': { files: [], name: 'Equivalency Certificate' },
+                'dataflow-report': { files: [], name: 'Dataflow Report / Qudra Bay Report' }
+            },
+            applicationId: '',
+            documentCategories: [
+                { id: 'passport-copy', title: '1. Passport Copy', description: 'Scanned color copy using scanner machine (not mobile). Valid for minimum 6 months.', required: true },
+                { id: 'visa-emirates-id', title: '2. Visa and Emirates ID', description: 'Scanned color copies of both current visa and Emirates ID.', required: true },
+                { id: 'studio-photo', title: '3. Studio Photo', description: 'High-resolution photo with white background taken in professional photo studio.', required: true },
+                { id: 'mofa-certificate', title: '4. MOFA Attested Educational Certificate', description: 'Educational certificate attested by MOFA in Arabic or English.', required: true },
+                { id: 'mark-sheet', title: '5. Mark Sheet (Transcripts)', description: 'Academic transcripts in Arabic or English language.', required: true },
+                { id: 'bank-statement', title: '6. Salary Bank Statement', description: 'Last 6 months statements from your salary account.', required: true },
+                { id: 'pay-slips', title: '7. Pay Slips', description: 'Last 6 months of official pay slips from your employer.', required: true },
+                { id: 'noc-company', title: '8. No Objection Letter from Company', description: 'Required after obtaining MOE Recognized Certificate.', required: true },
+                { id: 'noc-freezone', title: '9. NOC from Freezone', description: 'Only if your company operates under a Freezone authority.', required: false },
+                { id: 'equivalency-certificate', title: '10. Equivalency Certificate', description: 'Issued by MOHESR UAE for your educational certificate.', required: true },
+                { id: 'dataflow-report', title: '11. Dataflow Report / Qudra Bay Report', description: 'Degree verification report through Dataflow or Qudra Bay system.', required: true }
+            ]
+        };
+
+        // Helper Functions
+        function getProgress() {
+            const required = state.documentCategories.filter(d => d.required);
+            const uploaded = required.filter(d => state.documents[d.id].files.length > 0);
+            return Math.round((uploaded.length / required.length) * 100);
+        }
+
+        function getTotalUploaded() {
+            return Object.values(state.documents).filter(d => d.files.length > 0).length;
+        }
+
+        function updateCustomerData(field, value) {
+            state.customerData[field] = value;
+        }
+
+        function handleFileUpload(docId, files) {
+            const fileArray = Array.from(files);
+            const fileData = fileArray.map(file => ({ name: file.name, size: (file.size / 1024).toFixed(2) + ' KB', uploadDate: new Date().toLocaleDateString() }));
+            state.documents[docId].files = [...state.documents[docId].files, ...fileData];
+            render();
+        }
+
+        function checkEligibility() {
+            const salary = parseFloat(state.customerData.currentSalary);
+            const years = parseFloat(state.customerData.employmentYears);
+            return salary >= 30000 && years >= 2;
+        }
+
+        function submitCustomerDetails() {
+            const { name, dob, nationality, email } = state.customerData;
+            if (name && dob && nationality && email) {
+                if (checkEligibility()) {
+                    state.currentStep = 'documents';
+                    render();
+                } else {
+                    alert('You must have minimum 2 years employment and 30,000 AED salary to be eligible for Golden Visa.');
+                }
+            } else {
+                alert('Please fill all required fields.');
+            }
+        }
+
+        function submitApplication() {
+            const required = state.documentCategories.filter(d => d.required);
+            const allUploaded = required.every(d => state.documents[d.id].files.length > 0);
+            
+            if (allUploaded) {
+                state.applicationId = 'HERALD-GV-' + Date.now().toString().slice(-6);
+                state.currentStep = 'confirmation';
+                render();
+            } else {
+                alert('Please upload all required documents before submitting.');
+            }
+        }
+
+        function resetApplication() {
+            state.currentStep = 'customer-details';
+            state.customerData = { name: '', dob: '', nationality: '', phone: '', email: '', passportNumber: '', currentSalary: '', employmentYears: '', companyName: '' };
+            Object.keys(state.documents).forEach(key => { state.documents[key].files = []; });
+            state.applicationId = '';
+            render();
+        }
+
+        // Render Functions
+        function renderCustomerDetails() {
+            return `
+                <div class="max-w-4xl mx-auto p-6 fade-in">
+                    <div class="bg-white rounded-2xl shadow-2xl p-8">
+                        <div class="text-center mb-8">
+                            <div class="flex items-center justify-center mb-4">
+                                <img src="${heraldLogoBase64}" alt="Herald Logo" class="h-20 w-auto">
+                            </div>
+                            <h2 class="text-4xl font-bold text-gray-800 mb-2">UAE Golden Visa</h2>
+                            <p class="text-xl text-blue-600 font-semibold italic mb-4">Your Move, Seamless!</p>
+                            <p class="text-gray-600">Complete Application Management System</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-lg mb-6">
+                            <div class="flex items-start">
+                                <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                                <div>
+                                    <strong class="block mb-1">Important Eligibility Requirements:</strong>
+                                    <p class="text-sm">Minimum 2 years employment with current company and salary of at least 30,000 AED required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label><input type="text" id="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Enter your full name" value="${state.customerData.name}"></div>
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth *</label><input type="date" id="dob" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" value="${state.customerData.dob}"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-2">Nationality *</label><input type="text" id="nationality" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Your nationality" value="${state.customerData.nationality}"></div>
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-2">Passport Number *</label><input type="text" id="passportNumber" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Enter passport number" value="${state.customerData.passportNumber}"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label><input type="tel" id="phone" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="+971 52 111 2435" value="${state.customerData.phone}"></div>
+                                <div><label class="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label><input type="email" id="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="your.email@example.com" value="${state.customerData.email}"></div>
+                            </div>
+                            <div class="border-t-2 pt-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">Employment Information</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div><label class="block text-sm font-semibold text-gray-700 mb-2">Company Name *</label><input type="text" id="companyName" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Current employer" value="${state.customerData.companyName}"></div>
+                                    <div><label class="block text-sm font-semibold text-gray-700 mb-2">Years of Employment *</label><input type="number" id="employmentYears" min="2" step="0.5" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Minimum 2 years" value="${state.customerData.employmentYears}"></div>
+                                </div>
+                                <div class="mt-6"><label class="block text-sm font-semibold text-gray-700 mb-2">Current Monthly Salary (AED) *</label><input type="number" id="currentSalary" min="30000" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Minimum 30,000 AED" value="${state.customerData.currentSalary}"></div>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start">
+                                <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+                                <div class="text-sm text-blue-800"><strong>Security & Privacy:</strong> All information is encrypted with AES-256 and stored securely. Herald complies with UAE data protection regulations.</div>
+                            </div>
+                            <div class="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6 rounded-lg text-center">
+                                <svg class="w-12 h-12 mx-auto mb-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <h3 class="text-2xl font-bold mb-2">Golden Visa Package</h3>
+                                <p class="text-4xl font-bold mb-2">6,500 AED</p>
+                                <p class="text-sm">Complete processing, documentation support & expert guidance</p>
+                                <p class="text-xs mt-2 opacity-90">*Excludes equivalency process</p>
+                            </div>
+                            <button onclick="handleCustomerSubmit()" class="w-full bg-gradient-to-r from-blue-900 to-blue-700 text-white py-4 rounded-lg font-semibold hover:from-blue-800 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl">Check Eligibility & Continue</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDocuments() {
+            const progress = getProgress(); const uploaded = getTotalUploaded();
+            return `
+                <div class="max-w-7xl mx-auto p-6 fade-in">
+                    <div class="bg-white rounded-2xl shadow-2xl p-6 mb-6">
+                        <div class="flex items-center justify-between flex-wrap gap-4">
+                            <div>
+                                <div class="flex items-center mb-2">
+                                    <img src="${heraldLogoBase64}" alt="Herald Logo" class="h-12 w-auto mr-3">
+                                    <div>
+                                        <h1 class="text-2xl font-bold text-gray-800">Herald Golden Visa - Document Upload</h1>
+                                        <p class="text-sm text-gray-600">Applicant: ${state.customerData.name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-600">Documents Uploaded</div>
+                                <div class="text-3xl font-bold text-blue-900">${uploaded} / ${state.documentCategories.length}</div>
+                                <div class="text-sm text-gray-600 mt-1">Progress: ${progress}%</div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-200 rounded-full h-4 mt-4"><div class="progress-bar bg-gradient-to-r from-blue-900 to-teal-500 h-4 rounded-full" style="width: ${progress}%"></div></div>
+                    </div>
+                    <div class="bg-orange-100 border-2 border-orange-300 rounded-lg p-4 mb-6 flex items-start">
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                        <div class="text-sm text-gray-800">
+                            <strong class="block mb-1">Important:</strong>
+                            <p>• All documents must be scanned using a scanner machine (not mobile photos)</p>
+                            <p>• Documents must be in English or Arabic language</p>
+                            <p>• NOC from Freezone is optional (only if applicable)</p>
+                        </div>
+                    </div>
+                    <div class="grid gap-6">${state.documentCategories.map(doc => renderDocumentCard(doc)).join('')}</div>
+                    <div class="mt-8 bg-white rounded-xl p-6 flex items-center justify-between flex-wrap gap-4">
+                        <button onclick="state.currentStep='customer-details'; render();" class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors">← Back to Details</button>
+                        <button onclick="submitApplication()" ${progress !== 100 ? 'disabled' : ''} class="px-8 py-3 rounded-lg font-semibold transition-all shadow-lg ${progress === 100 ? 'bg-gradient-to-r from-green-600 to-teal-600 text-white hover:from-green-700 hover:to-teal-700 hover:shadow-xl' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}">${progress === 100 ? 'Submit Complete Application →' : `Complete Required Documents (${progress}%)`}</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDocumentCard(doc) {
+            const uploaded = state.documents[doc.id].files; const hasFiles = uploaded.length > 0;
+            return `
+                <div class="bg-white border-2 rounded-xl p-6 transition-all shadow-lg ${hasFiles ? 'border-green-400 bg-green-50' : doc.required ? 'border-gray-200 hover:border-blue-400' : 'border-gray-200 hover:border-gray-300 opacity-90'}">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-lg font-bold text-gray-800">${doc.title}</h3>
+                                <div class="flex items-center gap-2">
+                                    ${!doc.required ? '<span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Optional</span>' : ''}
+                                    ${hasFiles ? '<svg class="w-7 h-7 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' : ''}
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4">${doc.description}</p>
+                            ${hasFiles ? `<div class="bg-white border border-green-300 rounded-lg p-3 mb-4"><h4 class="text-sm font-semibold text-green-800 mb-2 flex items-center"><svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>Uploaded Files (${uploaded.length})</h4><div class="space-y-2">${uploaded.map(file => `<div class="flex items-center justify-between text-xs bg-green-50 p-2 rounded border border-green-200"><span class="text-gray-700 font-medium truncate flex-1">${file.name}</span><div class="flex items-center gap-2 text-gray-500 ml-2"><span>${file.size}</span><span class="text-green-600">✓</span></div></div>`).join('')}</div></div>` : ''}
+                            <label class="upload-label flex items-center justify-center w-full px-6 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-all ${hasFiles ? 'bg-green-50 border-green-400 hover:bg-green-100' : 'bg-blue-50 border-blue-400 hover:bg-blue-100'}">
+                                <svg class="w-5 h-5 mr-2 ${hasFiles ? 'text-green-700' : 'text-blue-900'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                <span class="font-semibold ${hasFiles ? 'text-green-700' : 'text-blue-900'}">${hasFiles ? 'Add More Files' : 'Upload Document'}</span>
+                                <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFileChange('${doc.id}', this.files)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderConfirmation() {
+            return `
+                <div class="max-w-4xl mx-auto p-6 fade-in flex items-center justify-center min-h-screen">
+                    <div class="bg-white rounded-2xl shadow-2xl p-12 w-full">
+                        <div class="flex justify-center mb-6"><div class="bg-green-100 p-6 rounded-full"><svg class="w-20 h-20 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg></div></div>
+                        <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Application Successfully Submitted!</h1>
+                        <p class="text-xl text-center text-gray-600 mb-8">Your Golden Visa application is now being processed by Herald's expert team</p>
+                        <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white rounded-xl p-6 mb-8 text-center"><div class="text-sm mb-2">Your Application Reference</div><div class="text-3xl font-bold tracking-wider mb-2">${state.applicationId}</div><p class="text-sm opacity-90">Keep this ID safe for tracking and queries</p></div>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                            <h3 class="font-bold text-gray-800 mb-4 flex items-center"><svg class="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>What Happens Next</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-start"><span class="font-semibold text-blue-900 mr-2">Step 1:</span><span class="text-gray-700">Herald team will review your documents (24-48 hours)</span></div>
+                                <div class="flex items-start"><span class="font-semibold text-blue-900 mr-2">Step 2:</span><span class="text-gray-700">Equivalency processing begins (30-35 working days)</span></div>
+                                <div class="flex items-start"><span class="font-semibold text-blue-900 mr-2">Step 3:</span><span class="text-gray-700">Application submission after equivalency approval</span></div>
+                                <div class="flex items-start"><span class="font-semibold text-blue-900 mr-2">Step 4:</span><span class="text-gray-700">Preapproval expected within 3-7 working days</span></div>
+                                <div class="flex items-start"><span class="font-semibold text-blue-900 mr-2">Step 5:</span><span class="text-gray-700">Medical, cancellation, and EID processing (as per timeline)</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-teal-50 border border-teal-200 rounded-lg p-6 mb-6">
+                            <h3 class="font-bold text-gray-800 mb-4 flex items-center"><svg class="w-5 h-5 mr-2 text-teal-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>Accessing Your Documents</h3>
+                            <div class="space-y-2 text-sm text-gray-700">
+                                <p><strong>1.</strong> Login credentials sent to: ${state.customerData.email}</p>
+                                <p><strong>2.</strong> Access the secure portal using your Application ID</p>
+                                <p><strong>3.</strong> All ${state.documentCategories.length} document categories are organized separately</p>
+                                <p><strong>4.</strong> Herald team will guide you through each subsequent step</p>
+                                <p><strong>5.</strong> Receive notifications for each process milestone</p>
+                            </div>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center"><svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>Security Measures Active</h3>
+                            <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+                                <div class="flex items-center"><svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span>AES-256 Encryption</span></div>
+                                <div class="flex items-center"><svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span>2FA Authentication</span></div>
+                                <div class="flex items-center"><svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span>Secure File Storage</span></div>
+                                <div class="flex items-center"><svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span>Activity Audit Trail</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white rounded-lg p-6 mb-6">
+                            <div class="flex items-center justify-center mb-4"><img src="${heraldLogoBase64}" alt="Herald Logo" class="h-16 w-auto bg-white p-2 rounded"></div>
+                            <h3 class="font-bold text-xl mb-4 text-center">Herald Document Clearing Service</h3>
+                            <p class="text-center italic mb-4">Your Move, Seamless!</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                                <div><svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg><p class="text-sm font-semibold">Email</p><p class="text-xs">services@heralddubai.com</p></div>
+                                <div><svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg><p class="text-sm font-semibold">Phone</p><p class="text-xs">+971 52 111 2435</p></div>
+                                <div><svg class="w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/></svg><p class="text-sm font-semibold">Location</p><p class="text-xs">Dubai, UAE</p></div>
+                            </div>
+                        </div>
+                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-8">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center"><svg class="w-5 h-5 mr-2 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>Important Reminders</h3>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Stay in UAE throughout the entire process (mandatory requirement)</span></li>
+                                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Preapproval is valid for 30 days only - immediate action required</span></li>
+                                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Company must cancel current visa within 25 days of preapproval</span></li>
+                                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Herald will guide you through each step with expert support</span></li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <button class="w-full bg-gradient-to-r from-blue-900 to-blue-700 text-white py-4 rounded-lg font-semibold hover:from-blue-800 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>Download Application Receipt (PDF)</button>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <button class="border-2 border-blue-900 text-blue-900 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">Access Document Portal</button>
+                                <button onclick="resetApplication()" class="border-2 border-teal-600 text-teal-600 py-3 rounded-lg font-semibold hover:bg-teal-50 transition-colors">New Application</button>
+                            </div>
+                        </div>
+                        <div class="mt-8 text-center text-sm text-gray-500"><p>Confirmation email sent to ${state.customerData.email}</p><p class="mt-2">Our team will contact you within 24 hours to begin the process</p></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Main render function
+        function render() {
+            const app = document.getElementById('app');
+            if (state.currentStep === 'customer-details') { app.innerHTML = renderCustomerDetails(); attachCustomerFormListeners(); } 
+            else if (state.currentStep === 'documents') { app.innerHTML = renderDocuments(); } 
+            else if (state.currentStep === 'confirmation') { app.innerHTML = renderConfirmation(); }
+        }
+
+        // Event listeners
+        function attachCustomerFormListeners() {
+            const fields = ['name', 'dob', 'nationality', 'phone', 'email', 'passportNumber', 'currentSalary', 'employmentYears', 'companyName'];
+            fields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element) { element.addEventListener('input', (e) => { updateCustomerData(field, e.target.value); }); }
+            });
+        }
+
+        function handleCustomerSubmit() {
+            const fields = ['name', 'dob', 'nationality', 'phone', 'email', 'passportNumber', 'currentSalary', 'employmentYears', 'companyName'];
+            fields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element) { state.customerData[field] = element.value; }
+            });
+            submitCustomerDetails();
+        }
+
+        function handleFileChange(docId, files) { handleFileUpload(docId, files); }
+        render(); // Initialize app
+    </script>
+</body>
+</html>
